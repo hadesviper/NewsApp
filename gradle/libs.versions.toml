@@ -14,8 +14,14 @@ compose-bom = "2025.05.01"
 coilVersion = "2.7.0"
 retrofit = "2.11.0"
 hilt = "2.56.1"
+navigation = "2.8.6"
+room = "2.7.2"
 
 [libraries]
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-ext = { group = "androidx.test.ext", name = "junit", version.ref = "junit-ext" }

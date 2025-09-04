@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">News App</string>
+    <string name="top_stories">آخر الأخبار</string>">
+    <string name="search_news">بحث</string>">
+    <string name="saved_news">الأخبار المفضلة</string>
+    <string name="http_exception">حدث خطأ، الرمز: </string>
+    <string name="io_exception">لا يوجد اتصال بالإنترنت</string>
+    <string name="unknown_error">خطأ غير معروف</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="empty_screen">المكان فارغ هنا</string>
+    <string name="home">الرئيسية</string>
+    <string name="search">بحث</string>
+    <string name="saved">المحفوظات</string>
+    <string name="relative_seconds">منذ %1$d ث</string>
+    <string name="relative_minutes">منذ %1$d د</string>
+    <string name="relative_hours">منذ %1$d س</string>
+    <string name="relative_days">منذ %1$d يوم</string>
+    <string name="relative_date">%1$s</string>
+    <string-array name="categories">
+        <item>أعمال</item>
+        <item>ترفيه</item>
+        <item>عام</item>
+        <item>صحة</item>
+        <item>علوم</item>
+        <item>رياضة</item>
+        <item>تكنولوجيا</item>
+    </string-array>
+</resources>
