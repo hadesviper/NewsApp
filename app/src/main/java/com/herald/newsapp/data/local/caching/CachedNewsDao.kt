@@ -17,6 +17,13 @@ interface CachedNewsDao {
     @Query("DELETE FROM cached_news")
     suspend fun deleteAllNews()
 
-    @Query("Select * from cached_news order by `date` asc")
+    @Query("""
+        SELECT c.url,c.title,c.date,c.image,c.sourceNewspaper,c.shortDescription,
+        CASE WHEN s.url IS NOT NULL THEN 1 ELSE 0 END AS isSaved
+        FROM cached_news AS c
+        LEFT JOIN saved_news  AS s 
+        ON c.url = s.url
+        ORDER BY c.date DESC
+    """)
     fun getAllNews(): Flow<List<CachedNewsEntity>>
 }

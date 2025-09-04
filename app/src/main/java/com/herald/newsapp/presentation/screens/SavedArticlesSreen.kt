@@ -44,7 +44,7 @@ fun SavedArticlesScreen(
         topBar = {
             CenterAlignedTopAppBar({
                 Text(
-                    text = stringResource(R.string.top_stories)
+                    text = stringResource(R.string.saved_news)
                 )
             })
         }

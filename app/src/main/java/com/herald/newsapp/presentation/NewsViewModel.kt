@@ -60,26 +60,41 @@ class NewsViewModel @Inject constructor(
         fetchNewsUseCase("us", listOf("general")).collect { result ->
             when (result) {
                 is Resource.Loading -> _newsState.update { newsState -> newsState.copy(isLoading = true, error = null) }
-                is Resource.Success -> _newsState.update { NewsState(news = result.data) }
-                is Resource.Error -> {
-                    result.exception.toUserFriendlyMessage(resourceProvider).let { message ->
-                        triggerEvent(NewsEvents.ErrorOccurred(message))
-                        _newsState.update { newsState -> newsState.copy(isLoading = false, error = message) }
-                    }
-                }
+                is Resource.Success -> remoteDataFetchingSuccess(result.data)
+                is Resource.Error -> remoteDataFetchingError(result.exception)
             }
         }
     }
 
-    private fun articleSaving(article: HeadlinesModel) = viewModelScope.launch(Dispatchers.IO) {
-        localUseCases.articleSavingUseCase(article)
-        triggerEvent(NewsEvents.ShowToast(if (article.isSaved) R.string.article_removed else R.string.article_saved))
+    private fun remoteDataFetchingSuccess(news: List<HeadlinesModel>) = viewModelScope.launch(Dispatchers.IO){
+        localUseCases.deleteCachedNewsUseCase()
+        localUseCases.addCachedNewsUseCase(news)
+        startCollectingCachedNews()
     }
 
+    private fun remoteDataFetchingError(exception: Exception) = viewModelScope.launch(Dispatchers.IO) {
+        exception.toUserFriendlyMessage(resourceProvider).let { message ->
+            triggerEvent(NewsEvents.ErrorOccurred(message))
+            _newsState.update { newsState -> newsState.copy(isLoading = false, error = message) }
+        }
+        startCollectingCachedNews()
+    }
+
+    private fun articleSaving(article: HeadlinesModel) = viewModelScope.launch(Dispatchers.IO) {
+        localUseCases.articleSavingUseCase(article)
+        localUseCases.updateCachedUseCase(article.url, !article.isSaved)
+        triggerEvent(NewsEvents.ShowToast(if (article.isSaved) R.string.article_removed else R.string.article_saved))
+    }
 
     private fun fetchSavedArticles() = viewModelScope.launch(Dispatchers.IO) {
         localUseCases.getSavedArticlesUseCase().collect { result ->
             _savedArticlesState.update { result }
+        }
+    }
+
+    private fun startCollectingCachedNews() = viewModelScope.launch (Dispatchers.IO){
+        localUseCases.fetchCachedNewsUseCase().collect { cachedNews ->
+            _newsState.update { newsState -> newsState.copy(isLoading = false, news = cachedNews, error = null) }
         }
     }
 

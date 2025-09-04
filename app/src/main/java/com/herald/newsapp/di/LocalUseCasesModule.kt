@@ -1,6 +1,10 @@
 package com.herald.newsapp.di
 
 import com.herald.newsapp.domain.local.caching.CachingRepository
+import com.herald.newsapp.domain.local.caching.usecases.AddCachedNewsUseCase
+import com.herald.newsapp.domain.local.caching.usecases.DeleteCachedNewsUseCase
+import com.herald.newsapp.domain.local.caching.usecases.FetchCachedNewsUseCase
+import com.herald.newsapp.domain.local.caching.usecases.UpdateCachedUseCase
 import com.herald.newsapp.domain.local.saved.SavingRepository
 import com.herald.newsapp.domain.local.saved.usecases.ArticleSavingUseCase
 import com.herald.newsapp.domain.local.saved.usecases.GetSavedArticlesUseCase
@@ -22,7 +26,11 @@ object LocalUseCasesModule {
     ): LocalUseCasesModel {
         return LocalUseCasesModel(
             articleSavingUseCase = ArticleSavingUseCase(savingRepository),
-            getSavedArticlesUseCase = GetSavedArticlesUseCase(savingRepository)
+            getSavedArticlesUseCase = GetSavedArticlesUseCase(savingRepository),
+            deleteCachedNewsUseCase = DeleteCachedNewsUseCase(cachingRepository),
+            fetchCachedNewsUseCase = FetchCachedNewsUseCase(cachingRepository),
+            addCachedNewsUseCase = AddCachedNewsUseCase(cachingRepository),
+            updateCachedUseCase = UpdateCachedUseCase(cachingRepository)
         )
     }
 }
