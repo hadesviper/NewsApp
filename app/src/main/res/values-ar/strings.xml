@@ -7,6 +7,8 @@
     <string name="http_exception">حدث خطأ، الرمز: </string>
     <string name="io_exception">لا يوجد اتصال بالإنترنت</string>
     <string name="unknown_error">خطأ غير معروف</string>
+    <string name="article_saved">تم حفظ المقال</string>
+    <string name="article_removed">تمت إزالة المقال</string>
     <string name="retry">إعادة المحاولة</string>
     <string name="empty_screen">المكان فارغ هنا</string>
     <string name="home">الرئيسية</string>

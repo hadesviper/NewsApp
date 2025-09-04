@@ -1,6 +1,7 @@
 package com.herald.newsapp.presentation.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -59,19 +60,21 @@ private fun Navigation(
     navController: NavHostController,
     newsViewModel: NewsViewModel
 ) {
+    val newsScrollState = rememberLazyListState()
+    val savedNewsScrollState = rememberLazyListState()
     NavHost(
         navController = navController,
         startDestination = Screens.NewsScreen.route,
         modifier = modifier
     ) {
         composable(route = Screens.NewsScreen.route) {
-            NewsScreen(newsViewModel)
+            NewsScreen(newsViewModel, newsScrollState)
         }
         composable(route = Screens.SearchScreen.route) {
             Text(Screens.SearchScreen.route)
         }
         composable(route = Screens.SavedScreen.route) {
-            Text(Screens.SavedScreen.route)
+            SavedArticlesScreen(newsViewModel, savedNewsScrollState)
         }
     }
 }

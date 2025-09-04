@@ -22,26 +22,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.herald.newsapp.R
-import com.herald.newsapp.common.showRetrySnackbar
 import com.herald.newsapp.presentation.NewsViewModel
 import com.herald.newsapp.presentation.actions.NewsEvents
 import com.herald.newsapp.presentation.actions.NewsIntents
 import com.herald.newsapp.presentation.components.EmptyScreen
-import com.herald.newsapp.presentation.components.LoadingBar
 import com.herald.newsapp.presentation.components.NewsList
-import com.herald.newsapp.presentation.states.NewsState
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsScreen(
+fun SavedArticlesScreen(
     newsViewModel: NewsViewModel,
     lazyListState: LazyListState
-    ) {
+) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val newsState by newsViewModel.newsState.collectAsStateWithLifecycle()
+    val newsState by newsViewModel.savedArticlesState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val retryString = stringResource(R.string.retry)
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = Modifier.fillMaxSize(),
@@ -54,34 +50,23 @@ fun NewsScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            newsState.apply {
-                LoadingBar(isLoading)
-                EmptyScreen(news.isNullOrEmpty())
-                news?.let { newsItems ->
+            newsState.let { newsItems ->
+                if (newsItems.isEmpty())
+                    EmptyScreen(true)
+                else
                     NewsList(
                         newsItems,
                         lazyListState,
                         { newsViewModel.handleIntent(NewsIntents.ArticleSaving(it)) },
                         { newsViewModel.handleIntent(NewsIntents.OpenHeadline(it)) }
                     )
-                }
             }
         }
     }
 
     LaunchedEffect(Unit) {
-        newsInit(
-            newsState,
-            { newsViewModel.handleIntent(NewsIntents.FetchNews) },
-            { newsViewModel.handleIntent(NewsIntents.ErrorOccurred(it)) }
-        )
         newsViewModel.newsEvents.collectLatest {
             when (it) {
-                is NewsEvents.ErrorOccurred -> {
-                    snackbarHostState.showRetrySnackbar(retryString, it.message) {
-                        newsViewModel.handleIntent(NewsIntents.FetchNews)
-                    }
-                }
                 is NewsEvents.OpenHeadline -> {
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.headlineUrl)))
                 }
@@ -90,24 +75,5 @@ fun NewsScreen(
                 }
             }
         }
-    }
-}
-
-private inline fun newsInit(
-    newsState: NewsState,
-    loadInitialData: () -> Unit,
-    onError: (String) -> Unit
-) {
-    newsState.apply {
-        /**
-         * This is supposed to show the initial data if it has not been already loaded
-         */
-        if (news == null && !isLoading) {
-            loadInitialData()
-        }
-        /**
-         * This is supposed to show the retry snackbar on config change only if there was an error already
-         */
-        error?.let { onError(it) }
     }
 }

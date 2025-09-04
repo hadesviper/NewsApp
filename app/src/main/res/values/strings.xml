@@ -6,6 +6,8 @@
     <string name="http_exception">Error Occurred, code: </string>
     <string name="io_exception">No Internet Connection</string>
     <string name="unknown_error">Unknown Error</string>
+    <string name="article_saved">Article saved</string>
+    <string name="article_removed">Article removed</string>
     <string name="retry">Retry</string>
     <string name="empty_screen">It\'s Lonely In Here</string>
     <string name="home">Home</string>

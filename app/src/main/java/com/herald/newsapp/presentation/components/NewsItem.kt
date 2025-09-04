@@ -33,7 +33,7 @@ fun NewsItem(
 ) {
     Column(
         modifier = Modifier.
-        clickable { onItemClick(newsItem.id)}.
+        clickable { onItemClick(newsItem.url)}.
         padding(dimensionResource(R.dimen.padding_large)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {

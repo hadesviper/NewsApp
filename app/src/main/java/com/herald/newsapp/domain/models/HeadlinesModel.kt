@@ -1,7 +1,7 @@
 package com.herald.newsapp.domain.models
 
 data class HeadlinesModel(
-    val id: String,
+    val url: String,
     val title: String,
     val date: String,
     val image: String,
