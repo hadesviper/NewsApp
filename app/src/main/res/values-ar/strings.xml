@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">News App</string>
+    <string name="choose_country">اختر الدولة</string>
+    <string name="api_supports_us">واجهة البرمجة تدعم الولايات المتحدة فقط حالياً.</string>
+    <string name="choose_categories">اختر الفئات</string>
+    <string name="choose_three_categories">اختر ثلاث فئات</string>
     <string name="top_stories">آخر الأخبار</string>">
     <string name="search_news">بحث</string>">
     <string name="saved_news">الأخبار المفضلة</string>

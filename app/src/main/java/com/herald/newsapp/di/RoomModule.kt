@@ -6,9 +6,12 @@ import com.herald.newsapp.common.DB_NAME
 import com.herald.newsapp.data.local.AppDatabase
 import com.herald.newsapp.data.local.caching.CachedNewsDao
 import com.herald.newsapp.data.local.caching.CachingRepoImpl
+import com.herald.newsapp.data.local.categories.CategoryDao
+import com.herald.newsapp.data.local.categories.CategoryRepoImpl
 import com.herald.newsapp.data.local.saved.SavedNewsDao
 import com.herald.newsapp.data.local.saved.SavedRepoImpl
 import com.herald.newsapp.domain.local.caching.CachingRepository
+import com.herald.newsapp.domain.local.categories.CategoryRepository
 import com.herald.newsapp.domain.local.saved.SavingRepository
 import dagger.Module
 import dagger.Provides
@@ -36,10 +39,18 @@ object RoomModule {
 
     @Provides
     @Singleton
+    fun provideCategoryDao(appDatabase: AppDatabase) = appDatabase.categoryDao()
+
+    @Provides
+    @Singleton
     fun providesNewsSavingRepo(savedNewsDao: SavedNewsDao): SavingRepository = SavedRepoImpl(savedNewsDao)
 
     @Provides
     @Singleton
     fun providesNewsCachingRepo(cachedNewsDao: CachedNewsDao): CachingRepository = CachingRepoImpl(cachedNewsDao)
+
+    @Provides
+    @Singleton
+    fun providesCategoryRepo(categoryDao: CategoryDao): CategoryRepository = CategoryRepoImpl(categoryDao)
 
 }

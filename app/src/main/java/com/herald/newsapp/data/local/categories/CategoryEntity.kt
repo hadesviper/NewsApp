@@ -5,5 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "selected_categories")
 data class CategoryEntity(
-    @PrimaryKey val name: String,
+    val name: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null
 )

@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">News App</string>
+    <string name="choose_country">Choose country</string>
+    <string name="api_supports_us">The API supports only United States currently.</string>
+    <string name="choose_categories">Choose Categories</string>
+    <string name="choose_three_categories">Choose three categories</string>
     <string name="top_stories">Top Stories</string>">
     <string name="search_news">Search News</string>">
     <string name="saved_news">Saved News</string>
@@ -19,6 +23,15 @@
     <string name="relative_days">%1$d d ago</string>
     <string name="relative_date">%1$s</string>
     <string-array name="categories">
+        <item>Business</item>
+        <item>Entertainment</item>
+        <item>General</item>
+        <item>Health</item>
+        <item>Science</item>
+        <item>Sports</item>
+        <item>Technology</item>
+    </string-array>
+    <string-array name="categories_en">
         <item>Business</item>
         <item>Entertainment</item>
         <item>General</item>

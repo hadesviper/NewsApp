@@ -1,6 +1,5 @@
 package com.herald.newsapp.domain.remote.usecases
 
-import android.util.Log
 import com.herald.newsapp.common.Resource
 import com.herald.newsapp.domain.remote.NewsRepository
 import kotlinx.coroutines.async
@@ -18,15 +17,15 @@ class FetchNewsUseCase @Inject constructor(
     ) = flow {
         try {
             emit(Resource.Loading)
+            if (categories.isEmpty())
+                throw Exception("No categories selected")
             val resultedNews = coroutineScope {
                 categories.map {
                     async { newsRepository.fetchHeadlines(countryCode, it) }
                 }.awaitAll().flatten()
             }
-            Log.i("TAG", "invoke: resulted news == $resultedNews")
             emit(Resource.Success(resultedNews))
         } catch (e: Exception) {
-            Log.i("TAG", "invoke: resulted error == ${e.message}")
             emit(Resource.Error(e))
         }
     }

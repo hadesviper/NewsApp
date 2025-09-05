@@ -1,10 +1,14 @@
 package com.herald.newsapp.common
 
+import android.app.Activity
+import android.app.LocaleManager
 import android.content.Context
+import android.content.res.Configuration
+import android.os.Build
+import android.os.LocaleList
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import com.herald.newsapp.R
-import com.herald.newsapp.domain.ResourceProvider
 import retrofit2.HttpException
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -14,11 +18,11 @@ import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 
-fun Exception.toUserFriendlyMessage(resourceProvider: ResourceProvider): String {
+fun Exception.toUserFriendlyMessage(context: Context): String {
     return when (this) {
-        is HttpException -> resourceProvider.getString(R.string.http_exception)
-        is IOException -> resourceProvider.getString(R.string.io_exception)
-        else -> this.message ?: resourceProvider.getString(R.string.unknown_error)
+        is HttpException -> context.getString(R.string.http_exception)
+        is IOException -> context.getString(R.string.io_exception)
+        else -> context.getString(R.string.unknown_error)
     }
 }
 
@@ -58,4 +62,34 @@ suspend fun SnackbarHostState.showRetrySnackbar(
         actionLabel = actionLabel,
     )
     if (result == SnackbarResult.ActionPerformed) { onActionClicked() }
+}
+
+fun Context.toggleLanguage( preferencesManager: PreferencesManager) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val localeManager = getSystemService(LocaleManager::class.java)
+        val current = localeManager.applicationLocales.toLanguageTags()
+        val newLang = if (current == "ar") "en" else "ar"
+        localeManager.applicationLocales = LocaleList.forLanguageTags(newLang)
+    } else {
+        val current = preferencesManager.getString(LANGUAGE_KEY, "en")
+        val newLang = if (current == "ar") "en" else "ar"
+        preferencesManager.saveString(LANGUAGE_KEY,newLang)
+
+        val updatedContext = setAppLocale(this, newLang)
+        (this as? Activity)?.apply {
+            applyOverrideConfiguration(updatedContext.resources.configuration)
+            recreate()
+        }
+    }
+}
+
+
+private fun setAppLocale(context: Context, language: String): Context {
+    val locale = Locale(language)
+    Locale.setDefault(locale)
+
+    val config = Configuration(context.resources.configuration)
+    config.setLocale(locale)
+
+    return context.createConfigurationContext(config)
 }

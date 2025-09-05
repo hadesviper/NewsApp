@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.2"
+hiltNavigationCompose = "1.2.0"
 kotlin = "2.1.10"
 core-ktx = "1.15.0"
 junit = "4.13.2"
@@ -18,6 +19,7 @@ navigation = "2.8.6"
 room = "2.7.2"
 
 [libraries]
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }

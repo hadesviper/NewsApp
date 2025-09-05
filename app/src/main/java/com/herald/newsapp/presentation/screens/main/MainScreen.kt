@@ -1,5 +1,8 @@
-package com.herald.newsapp.presentation.screens
+package com.herald.newsapp.presentation.screens.main
 
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -9,26 +12,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.herald.newsapp.presentation.NewsViewModel
-import com.herald.newsapp.presentation.actions.NewsEvents
-import com.herald.newsapp.presentation.actions.NewsIntents
-import com.herald.newsapp.presentation.components.Screens
+import com.herald.newsapp.common.COUNTRY_KEY
+import com.herald.newsapp.common.PreferencesManager
+import com.herald.newsapp.presentation.actions.news.NewsEvents
+import com.herald.newsapp.presentation.actions.news.NewsIntents
+import com.herald.newsapp.presentation.viewmodels.NewsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MainScreen(navController: NavHostController, newsViewModel: NewsViewModel) {
+fun MainScreen(
+    navController: NavHostController,
+    newsViewModel: NewsViewModel
+) {
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val bottomNavItems = listOf(
         Screens.NewsScreen,
         Screens.SearchScreen,
         Screens.SavedScreen
     )
+    val context = LocalContext.current
 
     Column {
         Navigation(Modifier.weight(1f), navController, newsViewModel)
@@ -49,6 +58,12 @@ fun MainScreen(navController: NavHostController, newsViewModel: NewsViewModel) {
         newsViewModel.newsEvents.collectLatest {
             when (it) {
                 is NewsEvents.NavigateToScreen -> navController.navigate(it.route)
+                is NewsEvents.OpenHeadline -> {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.headlineUrl)))
+                }
+                is NewsEvents.ShowToast -> {
+                    Toast.makeText(context, it.messageResID, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -62,19 +77,21 @@ private fun Navigation(
 ) {
     val newsScrollState = rememberLazyListState()
     val savedNewsScrollState = rememberLazyListState()
+    val country = PreferencesManager(navController.context).getString(COUNTRY_KEY)
+
     NavHost(
         navController = navController,
         startDestination = Screens.NewsScreen.route,
         modifier = modifier
     ) {
         composable(route = Screens.NewsScreen.route) {
-            NewsScreen(newsViewModel, newsScrollState)
+            NewsScreen(country, newsScrollState, newsViewModel)
         }
         composable(route = Screens.SearchScreen.route) {
             Text(Screens.SearchScreen.route)
         }
         composable(route = Screens.SavedScreen.route) {
-            SavedArticlesScreen(newsViewModel, savedNewsScrollState)
+            SavedArticlesScreen(savedNewsScrollState, newsViewModel)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.herald.newsapp.presentation.components
+package com.herald.newsapp.presentation.screens.main
 
 import com.herald.newsapp.R
 import com.herald.newsapp.common.HOME_SCREEN

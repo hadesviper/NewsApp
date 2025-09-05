@@ -9,3 +9,10 @@ const val SEARCH_SCREEN = "Search"
 const val SAVED_SCREEN =  "Saved"
 
 const val DB_NAME = "news_db"
+
+const val COUNTRY_KEY = "country"
+const val LANGUAGE_KEY = "lang"
+
+const val IS_INTRO_FINISHED = "is_intro_finished"
+
+const val CATEGORIES_MAX_SIZE = 3

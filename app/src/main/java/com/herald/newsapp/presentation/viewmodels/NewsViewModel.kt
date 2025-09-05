@@ -1,17 +1,18 @@
-package com.herald.newsapp.presentation
+package com.herald.newsapp.presentation.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.herald.newsapp.R
+import com.herald.newsapp.common.PreferencesManager
 import com.herald.newsapp.common.Resource
-import com.herald.newsapp.common.toUserFriendlyMessage
-import com.herald.newsapp.domain.ResourceProvider
+import com.herald.newsapp.common.toggleLanguage
+import com.herald.newsapp.domain.local.categories.usecases.GetCategoriesUseCase
 import com.herald.newsapp.domain.models.HeadlinesModel
 import com.herald.newsapp.domain.models.LocalUseCasesModel
 import com.herald.newsapp.domain.remote.usecases.FetchNewsUseCase
-import com.herald.newsapp.domain.remote.usecases.SearchNewsUseCase
-import com.herald.newsapp.presentation.actions.NewsEvents
-import com.herald.newsapp.presentation.actions.NewsIntents
+import com.herald.newsapp.presentation.actions.news.NewsEvents
+import com.herald.newsapp.presentation.actions.news.NewsIntents
 import com.herald.newsapp.presentation.states.NewsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,9 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(
     private val fetchNewsUseCase: FetchNewsUseCase,
-    private val searchNewsUseCase: SearchNewsUseCase,
     private val localUseCases: LocalUseCasesModel,
-    private val resourceProvider: ResourceProvider
+    private val getCategoriesUseCase: GetCategoriesUseCase,
 ) : ViewModel() {
 
     private val _newsState = MutableStateFlow(NewsState())
@@ -40,26 +40,30 @@ class NewsViewModel @Inject constructor(
     private val _newsEvents = MutableSharedFlow<NewsEvents>()
     val newsEvents = _newsEvents.asSharedFlow()
 
+    private var selectedCategories: List<String> = emptyList()
+
     init {
         fetchSavedArticles()
     }
 
     fun handleIntent(intent: NewsIntents) {
         when (intent) {
-            is NewsIntents.FetchNews -> fetchNews()
+            is NewsIntents.FetchNews -> fetchNews(intent.country)
             is NewsIntents.FetchSavedArticle -> fetchSavedArticles()
             is NewsIntents.OnSearchQueryChanged -> TODO()
             is NewsIntents.NavigateToScreen -> triggerEvent(NewsEvents.NavigateToScreen(intent.route))
             is NewsIntents.ArticleSaving -> articleSaving(intent.article)
-            is NewsIntents.ErrorOccurred -> triggerEvent(NewsEvents.ErrorOccurred(intent.error))
+            is NewsIntents.ErrorOccurred -> triggerEvent(NewsEvents.ErrorOccurred(intent.exception))
             is NewsIntents.OpenHeadline -> triggerEvent(NewsEvents.OpenHeadline(intent.headlineUrl))
+            is NewsIntents.SwitchLanguage -> switchLanguage(intent.context, intent.preferencesManager)
         }
     }
 
-    private fun fetchNews() = viewModelScope.launch(Dispatchers.IO) {
-        fetchNewsUseCase("us", listOf("general")).collect { result ->
+    private fun fetchNews(country: String) = viewModelScope.launch(Dispatchers.IO) {
+        if (selectedCategories.isEmpty()) selectedCategories = getCategoriesUseCase()
+        fetchNewsUseCase(country, selectedCategories).collect { result ->
             when (result) {
-                is Resource.Loading -> _newsState.update { newsState -> newsState.copy(isLoading = true, error = null) }
+                is Resource.Loading -> _newsState.update { newsState -> newsState.copy(isLoading = true, exception = null) }
                 is Resource.Success -> remoteDataFetchingSuccess(result.data)
                 is Resource.Error -> remoteDataFetchingError(result.exception)
             }
@@ -73,10 +77,8 @@ class NewsViewModel @Inject constructor(
     }
 
     private fun remoteDataFetchingError(exception: Exception) = viewModelScope.launch(Dispatchers.IO) {
-        exception.toUserFriendlyMessage(resourceProvider).let { message ->
-            triggerEvent(NewsEvents.ErrorOccurred(message))
-            _newsState.update { newsState -> newsState.copy(isLoading = false, error = message) }
-        }
+        _newsState.update { newsState -> newsState.copy(isLoading = false, exception = exception) }
+        triggerEvent(NewsEvents.ErrorOccurred(exception))
         startCollectingCachedNews()
     }
 
@@ -94,8 +96,12 @@ class NewsViewModel @Inject constructor(
 
     private fun startCollectingCachedNews() = viewModelScope.launch (Dispatchers.IO){
         localUseCases.fetchCachedNewsUseCase().collect { cachedNews ->
-            _newsState.update { newsState -> newsState.copy(isLoading = false, news = cachedNews, error = null) }
+            _newsState.update { newsState -> newsState.copy(isLoading = false, news = cachedNews) }
         }
+    }
+
+    private fun switchLanguage(context: Context, preferencesManager: PreferencesManager) {
+        context.toggleLanguage(preferencesManager)
     }
 
     private fun triggerEvent(event: NewsEvents) = viewModelScope.launch(Dispatchers.IO) {
