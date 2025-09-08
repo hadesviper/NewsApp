@@ -1,4 +1,4 @@
-package com.herald.newsapp.presentation.components
+package com.herald.newsapp.presentation.screens.common
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState

@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.herald.newsapp.R
 import com.herald.newsapp.common.COUNTRY_KEY
 import com.herald.newsapp.common.PreferencesManager
@@ -34,7 +33,7 @@ import java.util.Locale
 
 @Composable
 fun ChooseCountryScreen(
-    onBoardingViewModel: OnBoardingViewModel = hiltViewModel(),
+    onBoardingViewModel: OnBoardingViewModel
 ) {
     val context = LocalContext.current
     OnBoardingParent(stringResource(R.string.choose_country), onBoardingViewModel) {

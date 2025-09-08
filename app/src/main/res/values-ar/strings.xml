@@ -8,7 +8,8 @@
     <string name="top_stories">آخر الأخبار</string>">
     <string name="search_news">بحث</string>">
     <string name="saved_news">الأخبار المفضلة</string>
-    <string name="http_exception">حدث خطأ، الرمز: </string>
+    <string name="filter_categories">تصفية الفئات</string>
+    <string name="http_exception">حدث خطأ، الرمز: %1$d</string>
     <string name="io_exception">لا يوجد اتصال بالإنترنت</string>
     <string name="unknown_error">خطأ غير معروف</string>
     <string name="article_saved">تم حفظ المقال</string>

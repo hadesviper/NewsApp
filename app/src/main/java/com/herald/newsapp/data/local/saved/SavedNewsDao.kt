@@ -14,6 +14,6 @@ interface SavedNewsDao {
     @Query("DELETE FROM saved_news where url = :key")
     suspend fun deleteArticle(key: String)
 
-    @Query("Select * from saved_news order by `date` asc")
+    @Query("Select * from saved_news order by `date` desc")
     fun getAllNews(): Flow<List<SavedNewsEntity>>
 }

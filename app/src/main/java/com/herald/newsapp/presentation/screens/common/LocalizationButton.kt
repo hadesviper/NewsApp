@@ -1,4 +1,4 @@
-package com.herald.newsapp.presentation.components
+package com.herald.newsapp.presentation.screens.common
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton

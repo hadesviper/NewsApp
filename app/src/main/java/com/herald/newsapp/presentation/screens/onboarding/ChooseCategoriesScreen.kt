@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.herald.newsapp.R
 import com.herald.newsapp.common.CATEGORIES_MAX_SIZE
 import com.herald.newsapp.presentation.actions.onboarding.OnBoardingIntents
@@ -22,12 +21,12 @@ import com.herald.newsapp.presentation.viewmodels.OnBoardingViewModel
 
 @Composable
 fun ChooseCategoriesScreen(
-    onBoardingViewModel: OnBoardingViewModel = hiltViewModel(),
+    onBoardingViewModel: OnBoardingViewModel,
 ) {
     OnBoardingParent(stringResource(R.string.choose_categories),onBoardingViewModel) {
         val categories = stringArrayResource(R.array.categories)
         val categoriesEn = stringArrayResource(R.array.categories_en)
-        var selectedCategories by remember { mutableStateOf(emptySet<String>()) }
+        var selectedCategories by remember { mutableStateOf(emptyList<String>()) }
         Text(
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
             text = stringResource(R.string.choose_three_categories),

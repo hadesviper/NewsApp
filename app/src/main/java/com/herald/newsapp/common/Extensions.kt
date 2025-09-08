@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 fun Exception.toUserFriendlyMessage(context: Context): String {
     return when (this) {
-        is HttpException -> context.getString(R.string.http_exception)
+        is HttpException -> context.getString(R.string.http_exception,this.code())
         is IOException -> context.getString(R.string.io_exception)
         else -> context.getString(R.string.unknown_error)
     }
@@ -53,15 +53,19 @@ fun String.getDateOnly(context: Context): String {
 }
 
 suspend fun SnackbarHostState.showRetrySnackbar(
-    actionLabel: String,
+    actionLabel: String?,
     message: String,
-    onActionClicked: () -> Unit
+    onActionClicked: (() -> Unit)?
 ) {
     val result = showSnackbar(
         message = message,
         actionLabel = actionLabel,
     )
-    if (result == SnackbarResult.ActionPerformed) { onActionClicked() }
+    if (result == SnackbarResult.ActionPerformed) {
+        if (onActionClicked != null) {
+            onActionClicked()
+        }
+    }
 }
 
 fun Context.toggleLanguage( preferencesManager: PreferencesManager) {

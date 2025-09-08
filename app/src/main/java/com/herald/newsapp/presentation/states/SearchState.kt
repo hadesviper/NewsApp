@@ -1,9 +1,0 @@
-package com.herald.newsapp.presentation.states
-
-import com.herald.newsapp.domain.models.HeadlinesModel
-
-data class SearchState(
-    val isLoading: Boolean = false,
-    val news: List<HeadlinesModel>? = null,
-    val error: String? = null,
-)

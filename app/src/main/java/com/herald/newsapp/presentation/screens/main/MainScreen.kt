@@ -1,7 +1,5 @@
 package com.herald.newsapp.presentation.screens.main
 
-import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,23 +9,28 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.herald.newsapp.common.COUNTRY_KEY
 import com.herald.newsapp.common.PreferencesManager
+import com.herald.newsapp.domain.models.SearchQuery
 import com.herald.newsapp.presentation.actions.news.NewsEvents
 import com.herald.newsapp.presentation.actions.news.NewsIntents
 import com.herald.newsapp.presentation.viewmodels.NewsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MainScreen(
+fun MainNavScreen(
     navController: NavHostController,
     newsViewModel: NewsViewModel
 ) {
@@ -43,10 +46,12 @@ fun MainScreen(
         Navigation(Modifier.weight(1f), navController, newsViewModel)
         NavigationBar {
             bottomNavItems.forEach { item ->
+                val isSelected = currentBackStackEntry.value?.destination?.route == item.route
                 NavigationBarItem(
-                    selected = currentBackStackEntry.value?.destination?.route == item.route,
+                    selected = isSelected,
                     onClick = {
-                        newsViewModel.handleIntent(NewsIntents.NavigateToScreen(item.route))
+                        if (!isSelected)
+                            newsViewModel.handleIntent(NewsIntents.NavigateToScreen(item.route))
                     },
                     icon = { Icon(painterResource(item.icon), contentDescription = null) },
                     label = { Text(stringResource(item.label)) }
@@ -58,9 +63,6 @@ fun MainScreen(
         newsViewModel.newsEvents.collectLatest {
             when (it) {
                 is NewsEvents.NavigateToScreen -> navController.navigate(it.route)
-                is NewsEvents.OpenHeadline -> {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.headlineUrl)))
-                }
                 is NewsEvents.ShowToast -> {
                     Toast.makeText(context, it.messageResID, Toast.LENGTH_SHORT).show()
                 }
@@ -78,6 +80,8 @@ private fun Navigation(
     val newsScrollState = rememberLazyListState()
     val savedNewsScrollState = rememberLazyListState()
     val country = PreferencesManager(navController.context).getString(COUNTRY_KEY)
+    val categories by newsViewModel.selectedCategories.collectAsStateWithLifecycle()
+    val searchQuery = remember { mutableStateOf(SearchQuery(country = country, categories = categories)) }
 
     NavHost(
         navController = navController,
@@ -88,10 +92,16 @@ private fun Navigation(
             NewsScreen(country, newsScrollState, newsViewModel)
         }
         composable(route = Screens.SearchScreen.route) {
-            Text(Screens.SearchScreen.route)
+            SearchScreen(searchQuery,newsViewModel)
         }
         composable(route = Screens.SavedScreen.route) {
             SavedArticlesScreen(savedNewsScrollState, newsViewModel)
+        }
+    }
+
+    LaunchedEffect(categories) {
+        if (searchQuery.value.categories != categories) {
+            searchQuery.value = searchQuery.value.copy(categories = categories)
         }
     }
 }

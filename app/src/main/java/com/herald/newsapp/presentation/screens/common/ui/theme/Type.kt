@@ -1,4 +1,4 @@
-package com.herald.newsapp.presentation.ui.theme
+package com.herald.newsapp.presentation.screens.common.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

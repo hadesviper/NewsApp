@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.herald.newsapp.R
 import com.herald.newsapp.common.PreferencesManager
@@ -25,10 +24,10 @@ import com.herald.newsapp.common.showRetrySnackbar
 import com.herald.newsapp.common.toUserFriendlyMessage
 import com.herald.newsapp.presentation.actions.news.NewsEvents
 import com.herald.newsapp.presentation.actions.news.NewsIntents
-import com.herald.newsapp.presentation.components.EmptyScreen
-import com.herald.newsapp.presentation.components.LoadingBar
-import com.herald.newsapp.presentation.components.LocalizationButton
-import com.herald.newsapp.presentation.components.NewsList
+import com.herald.newsapp.presentation.screens.common.EmptyScreen
+import com.herald.newsapp.presentation.screens.common.LoadingBar
+import com.herald.newsapp.presentation.screens.common.LocalizationButton
+import com.herald.newsapp.presentation.screens.common.NewsList
 import com.herald.newsapp.presentation.states.NewsState
 import com.herald.newsapp.presentation.viewmodels.NewsViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -38,7 +37,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun NewsScreen(
     country: String,
     lazyListState: LazyListState,
-    newsViewModel: NewsViewModel = hiltViewModel()
+    newsViewModel: NewsViewModel
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val newsState by newsViewModel.newsState.collectAsStateWithLifecycle()
@@ -69,7 +68,7 @@ fun NewsScreen(
                         newsItems,
                         lazyListState,
                         { newsViewModel.handleIntent(NewsIntents.ArticleSaving(it)) },
-                        { newsViewModel.handleIntent(NewsIntents.OpenHeadline(it)) }
+                        { newsViewModel.handleIntent(NewsIntents.OpenHeadline(it,context)) }
                     )
                 }
             }
@@ -77,11 +76,7 @@ fun NewsScreen(
     }
 
     LaunchedEffect(Unit) {
-        newsInit(
-            newsState,
-            { newsViewModel.handleIntent(NewsIntents.FetchNews(country)) },
-            { newsViewModel.handleIntent(NewsIntents.ErrorOccurred(it)) }
-        )
+        newsInit(newsState) { newsViewModel.handleIntent(NewsIntents.FetchNews(country)) }
         newsViewModel.newsEvents.collectLatest {
             when (it) {
                 is NewsEvents.ErrorOccurred -> {
@@ -92,24 +87,22 @@ fun NewsScreen(
             }
         }
     }
+
+    /**
+     * This is supposed to show the retry snackbar on config change only if there was an error already
+     */
+    newsState.exception?.let { newsViewModel.handleIntent(NewsIntents.ErrorOccurred(it)) }
 }
 
 
 private inline fun newsInit(
     newsState: NewsState,
     loadInitialData: () -> Unit,
-    onError: (Exception) -> Unit
 ) {
     newsState.apply {
         /**
          * This is supposed to show the initial data if it has not been already loaded
          */
-        if (news == null && !isLoading) {
-            loadInitialData()
-        }
-        /**
-         * This is supposed to show the retry snackbar on config change only if there was an error already
-         */
-        exception?.let { onError(it) }
+        if (news == null && !isLoading) loadInitialData()
     }
 }

@@ -16,21 +16,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.herald.newsapp.R
 import com.herald.newsapp.common.PreferencesManager
 import com.herald.newsapp.presentation.actions.news.NewsIntents
-import com.herald.newsapp.presentation.components.EmptyScreen
-import com.herald.newsapp.presentation.components.LocalizationButton
-import com.herald.newsapp.presentation.components.NewsList
+import com.herald.newsapp.presentation.screens.common.EmptyScreen
+import com.herald.newsapp.presentation.screens.common.LocalizationButton
+import com.herald.newsapp.presentation.screens.common.NewsList
 import com.herald.newsapp.presentation.viewmodels.NewsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SavedArticlesScreen(
     lazyListState: LazyListState,
-    newsViewModel: NewsViewModel = hiltViewModel()
+    newsViewModel: NewsViewModel
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -60,7 +59,7 @@ fun SavedArticlesScreen(
                         newsItems,
                         lazyListState,
                         { newsViewModel.handleIntent(NewsIntents.ArticleSaving(it)) },
-                        { newsViewModel.handleIntent(NewsIntents.OpenHeadline(it)) }
+                        { newsViewModel.handleIntent(NewsIntents.OpenHeadline(it,context)) }
                     )
             }
         }

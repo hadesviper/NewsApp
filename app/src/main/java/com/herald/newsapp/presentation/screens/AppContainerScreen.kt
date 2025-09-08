@@ -10,7 +10,7 @@ import com.herald.newsapp.common.COUNTRY_KEY
 import com.herald.newsapp.common.IS_INTRO_FINISHED
 import com.herald.newsapp.common.PreferencesManager
 import com.herald.newsapp.presentation.actions.onboarding.OnBoardingEvents
-import com.herald.newsapp.presentation.screens.main.MainScreen
+import com.herald.newsapp.presentation.screens.main.MainNavScreen
 import com.herald.newsapp.presentation.screens.onboarding.ChooseCategoriesScreen
 import com.herald.newsapp.presentation.screens.onboarding.ChooseCountryScreen
 import com.herald.newsapp.presentation.viewmodels.NewsViewModel
@@ -25,17 +25,17 @@ fun AppContainer(
 ) {
     val preferencesManager = PreferencesManager(navController.context)
     if (preferencesManager.getBoolean(IS_INTRO_FINISHED)) {
-        MainScreen(navController, newsViewModel)
+        MainNavScreen(navController, newsViewModel)
         return
     }
     val currentPage by onBoardingViewModel.currentPage.collectAsStateWithLifecycle()
 
     when (currentPage) {
-        0 -> ChooseCountryScreen()
-        1 -> ChooseCategoriesScreen()
+        0 -> ChooseCountryScreen(onBoardingViewModel)
+        1 -> ChooseCategoriesScreen(onBoardingViewModel)
         2 -> {
             preferencesManager.saveBoolean(IS_INTRO_FINISHED, true)
-            MainScreen(navController, newsViewModel)
+            MainNavScreen(navController, newsViewModel)
         }
     }
     LaunchedEffect(Unit) {

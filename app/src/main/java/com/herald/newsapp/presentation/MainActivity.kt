@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.navigation.compose.rememberNavController
 import com.herald.newsapp.presentation.screens.AppContainer
-import com.herald.newsapp.presentation.ui.theme.NewsAppTheme
+import com.herald.newsapp.presentation.screens.common.ui.theme.NewsAppTheme
 import com.herald.newsapp.presentation.viewmodels.NewsViewModel
 import com.herald.newsapp.presentation.viewmodels.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint

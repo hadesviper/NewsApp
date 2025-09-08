@@ -7,7 +7,7 @@
     <string name="top_stories">Top Stories</string>">
     <string name="search_news">Search News</string>">
     <string name="saved_news">Saved News</string>
-    <string name="http_exception">Error Occurred, code: </string>
+    <string name="http_exception">Error Occurred, code: %1$d</string>
     <string name="io_exception">No Internet Connection</string>
     <string name="unknown_error">Unknown Error</string>
     <string name="article_saved">Article saved</string>
@@ -17,6 +17,7 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="saved">Saved</string>
+    <string name="filter_categories">Filter Categories</string>
     <string name="relative_seconds">%1$d s ago</string>
     <string name="relative_minutes">%1$d m ago</string>
     <string name="relative_hours">%1$d h ago</string>

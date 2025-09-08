@@ -47,7 +47,7 @@ class OnBoardingViewModel @Inject constructor(
         context.toggleLanguage(preferencesManager)
     }
 
-    private fun emitEvent(event: OnBoardingEvents) = viewModelScope.launch(Dispatchers.IO) {
+    private fun emitEvent(event: OnBoardingEvents) = viewModelScope.launch {
         _onBoardingEvents.emit(event)
     }
 }

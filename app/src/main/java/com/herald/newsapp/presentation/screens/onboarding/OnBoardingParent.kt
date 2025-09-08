@@ -1,5 +1,6 @@
 package com.herald.newsapp.presentation.screens.onboarding
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.herald.newsapp.common.PreferencesManager
 import com.herald.newsapp.presentation.actions.onboarding.OnBoardingIntents
-import com.herald.newsapp.presentation.components.LocalizationButton
+import com.herald.newsapp.presentation.screens.common.LocalizationButton
 import com.herald.newsapp.presentation.viewmodels.OnBoardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,5 +55,9 @@ fun OnBoardingParent(
         Column(modifier = Modifier.padding(innerPadding)) {
             content()
         }
+    }
+    BackHandler {
+        if (currentPage > 0)
+            onBoardingViewModel.handleIntent(OnBoardingIntents.PreviousPage)
     }
 }

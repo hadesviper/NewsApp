@@ -1,4 +1,4 @@
-package com.herald.newsapp.presentation.ui.theme
+package com.herald.newsapp.presentation.screens.common.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

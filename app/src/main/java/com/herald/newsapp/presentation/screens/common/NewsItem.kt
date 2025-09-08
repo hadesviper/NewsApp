@@ -1,5 +1,9 @@
-package com.herald.newsapp.presentation.components
+package com.herald.newsapp.presentation.screens.common
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,13 +58,21 @@ private fun HeadlineImage(newsItem: HeadlinesModel,onSaveClick: (HeadlinesModel)
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius)))
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = FastOutSlowInEasing
+                    )
+                )
         )
-        IconButton(onClick = { onSaveClick(newsItem) },modifier = Modifier.align(Alignment.TopEnd)) {
-            Icon(painter = painterResource(if (newsItem.isSaved) R.drawable.baseline_bookmark_24 else R.drawable.baseline_bookmark_border_24),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
+        SaveButton(
+            modifier = Modifier.align(Alignment.TopEnd)
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(bottomStart = dimensionResource(R.dimen.corner_radius))),
+            newsItem = newsItem,
+            onSaveClick = onSaveClick
+        )
     }
 }
 
@@ -99,5 +111,16 @@ private fun DateAndSource(date: String, sourceNewspaper: String) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.secondary
         )
+    }
+}
+@Composable
+private fun SaveButton(modifier:Modifier ,newsItem: HeadlinesModel, onSaveClick: (HeadlinesModel) -> Unit) {
+    Box(modifier = modifier) {
+        IconButton(onClick = { onSaveClick(newsItem) }) {
+            Icon(painter = painterResource(if (newsItem.isSaved) R.drawable.baseline_bookmark_24 else R.drawable.baseline_bookmark_border_24),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
