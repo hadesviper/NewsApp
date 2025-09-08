@@ -2,7 +2,7 @@ package com.herald.newsapp.common
 
 const val BASE_URL = "https://newsapi.org/"
 //We should not place the api key directly hard coded here, this is for illustration only
-const val API_KEY = "3e926b369a6d419c93f56478710f5686"
+const val API_KEY = "5eaa7259b29248649a05d1f76ba1c570"
 
 const val RESULT_SORT_BY = "date"
 
