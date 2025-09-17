@@ -5,15 +5,15 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       android_signing:
-        - keystore_reference
+        - keystore_reference2
     scripts:
       - name: Set Android SDK location
         script: | 
             echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
       - name: Build Android release
         script: |
-          ./gradlew bundleRelease # -> to create the .aab
-          ./gradlew assembleRelease # -> to create the .apk
+          chmod +x ./gradlew
+          ./gradlew assembleRelease
     artifacts:
       - app/build/outputs/**/*.aab
       - app/build/outputs/**/*.apk
