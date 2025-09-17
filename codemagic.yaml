@@ -17,6 +17,11 @@ workflows:
     artifacts:
       - app/build/outputs/**/*.aab
       - app/build/outputs/**/*.apk
+    triggering:
+     events:
+       - push
+     branch_patterns:
+       - pattern: 'gh-readonly-queue/master'
     publishing:
       email:
         recipients:
