@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.herald.newsapp.common.COUNTRY_KEY
@@ -21,6 +20,7 @@ import com.herald.newsapp.presentation.screens.onboarding.ChooseCountryScreen
 import com.herald.newsapp.presentation.viewmodels.NewsViewModel
 import com.herald.newsapp.presentation.viewmodels.OnBoardingViewModel
 import kotlinx.coroutines.flow.collectLatest
+
 @Composable
 fun ResponsiveLayout() {
     BoxWithConstraints {
